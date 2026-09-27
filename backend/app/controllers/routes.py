@@ -2,9 +2,11 @@
 
 from fastapi import APIRouter
 
+from app.controllers.board import router as board_router
 from app.services.health import greeting, health_status
 
 router = APIRouter(prefix="/api")
+router.include_router(board_router)
 
 
 @router.get("/health")

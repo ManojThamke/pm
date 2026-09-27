@@ -12,7 +12,7 @@ export default defineConfig({
   },
   webServer: {
     command:
-      "npm run build && uv run --project ../backend uvicorn app.main:app --app-dir ../backend --host 127.0.0.1 --port 8000",
+      "npm run build && ..\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --app-dir ../backend --host 127.0.0.1 --port 8000",
     url: "http://127.0.0.1:8000",
     reuseExistingServer: true,
     timeout: 120_000,

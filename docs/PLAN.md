@@ -87,18 +87,18 @@
 
 ### Checklist
 
-- [ ] Add a small authentication model and controller boundary for the hardcoded MVP credentials `user` and `password`.
-- [ ] Add a view for sign-in, validation, loading, and invalid-credential states.
-- [ ] Protect the board view and provide a logout action.
-- [ ] Keep the design ready for multiple users without implementing unnecessary account features.
-- [ ] Define the MVP session mechanism and its security limitations in the documentation.
+- [x] Add a small authentication model and controller boundary for the hardcoded MVP credentials `user` and `password`.
+- [x] Add a view for sign-in, validation, loading, and invalid-credential states.
+- [x] Protect the board view and provide a logout action.
+- [x] Keep the design ready for multiple users without implementing unnecessary account features.
+- [x] Define the MVP session mechanism and its security limitations in the documentation.
 
 ### Tests and verification
 
-- [ ] Unit-test credential validation, session state transitions, guards, and logout with 100% unit coverage for the changed scope.
-- [ ] Add integration tests for unauthenticated redirect, invalid credentials, successful login, refresh behavior, and logout.
+- [x] Unit-test credential validation, session state transitions, guards, and logout with 100% unit coverage for the changed scope.
+- [x] Add integration tests for unauthenticated redirect, invalid credentials, successful login, refresh behavior, and logout.
 - [ ] Verify protected API behavior if authentication reaches the backend in this part.
-- [ ] Run lint, type-check, build, unit, and browser integration suites.
+- [x] Run lint, type-check, build, unit, and browser integration suites.
 
 ### Success criteria
 
@@ -110,17 +110,17 @@
 
 ### Checklist
 
-- [ ] Propose the SQLite schema for users, boards, columns, cards, ordering, and any session-related data needed by the MVP.
-- [ ] Save the schema proposal as JSON in `docs/` and document relationships, constraints, defaults, and migration/initialization behavior.
-- [ ] Define how the single-board MVP maps to a future multi-user design.
-- [ ] Define API/domain payload shapes separately from persistence rows.
+- [x] Propose the SQLite schema for users, boards, columns, cards, ordering, and any session-related data needed by the MVP.
+- [x] Save the schema proposal as JSON in `docs/` and document relationships, constraints, defaults, and migration/initialization behavior.
+- [x] Define how the single-board MVP maps to a future multi-user design.
+- [x] Define API/domain payload shapes separately from persistence rows.
 - [ ] Obtain explicit user sign-off before implementing the schema.
 
 ### Tests and verification
 
-- [ ] Validate the schema JSON with a repeatable test or validation command.
-- [ ] Test representative serialization/deserialization examples and invalid data cases at 100% unit coverage for the modeling code.
-- [ ] Review indexes and uniqueness constraints against the planned API operations.
+- [x] Validate the schema JSON with a repeatable test or validation command.
+- [x] Test representative serialization/deserialization examples and invalid data cases at 100% unit coverage for the modeling code.
+- [x] Review indexes and uniqueness constraints against the planned API operations.
 
 ### Success criteria
 
@@ -132,18 +132,18 @@
 
 ### Checklist
 
-- [ ] Initialize SQLite automatically when the database file is absent.
-- [ ] Implement repository/model code for users, boards, columns, and cards.
-- [ ] Implement controller routes to read and update the signed-in user's board.
-- [ ] Validate payloads and enforce ownership and ordering invariants at the controller/service boundary.
-- [ ] Return explicit, consistent error responses for invalid input, missing records, and persistence failures.
-- [ ] Keep database access out of route handlers except through the repository/service layer.
+- [x] Initialize SQLite automatically when the database file is absent.
+- [x] Implement repository/model code for users, boards, columns, and cards.
+- [x] Implement controller routes to read and update the signed-in user's board.
+- [x] Validate payloads and enforce ownership and ordering invariants at the controller/service boundary.
+- [x] Return explicit, consistent error responses for invalid input, missing records, and persistence failures.
+- [x] Keep database access out of route handlers except through the repository/service layer.
 
 ### Tests and verification
 
-- [ ] Unit-test models, validation, repositories, services, and controllers with 100% unit coverage for all new backend modules.
-- [ ] Add API integration tests for initialization, reads, updates, ordering, invalid payloads, ownership, and persistence across app instances.
-- [ ] Run the full backend suite and a clean-database test.
+- [x] Unit-test models, validation, repositories, services, and controllers with 100% unit coverage for all new backend modules.
+- [x] Add API integration tests for initialization, reads, updates, ordering, invalid payloads, ownership, and persistence across app instances.
+- [x] Run the full backend suite and a clean-database test.
 
 ### Success criteria
 

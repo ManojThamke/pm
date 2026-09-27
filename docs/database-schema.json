@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "database": {
+    "engine": "sqlite",
+    "filename": "data/project-management.sqlite3",
+    "foreign_keys": true,
+    "journal_mode": "wal"
+  },
+  "tables": {
+    "users": {
+      "purpose": "Application identities. The MVP seeds one user; additional users can be added later.",
+      "columns": {
+        "id": {
+          "type": "INTEGER",
+          "primary_key": true,
+          "autoincrement": true
+        },
+        "username": {
+          "type": "TEXT",
+          "required": true,
+          "unique": true
+        },
+        "password_hash": {
+          "type": "TEXT",
+          "required": true
+        },
+        "created_at": {
+          "type": "TEXT",
+          "required": true,
+          "format": "ISO-8601 UTC"
+        }
+      }
+    },
+    "boards": {
+      "purpose": "A user's Kanban board.",
+      "columns": {
+        "id": {
+          "type": "INTEGER",
+          "primary_key": true,
+          "autoincrement": true
+        },
+        "user_id": {
+          "type": "INTEGER",
+          "required": true,
+          "references": "users.id"
+        },
+        "name": {
+          "type": "TEXT",
+          "required": true
+        },
+        "created_at": {
+          "type": "TEXT",
+          "required": true,
+          "format": "ISO-8601 UTC"
+        },
+        "updated_at": {
+          "type": "TEXT",
+          "required": true,
+          "format": "ISO-8601 UTC"
+        }
+      },
+      "constraints": [
+        "UNIQUE(user_id)"
+      ]
+    },
+    "columns": {
+      "purpose": "Ordered workflow stages belonging to a board.",
+      "columns": {
+        "id": {
+          "type": "INTEGER",
+          "primary_key": true,
+          "autoincrement": true
+        },
+        "board_id": {
+          "type": "INTEGER",
+          "required": true,
+          "references": "boards.id"
+        },
+        "title": {
+          "type": "TEXT",
+          "required": true
+        },
+        "position": {
+          "type": "INTEGER",
+          "required": true,
+          "minimum": 0
+        }
+      },
+      "constraints": [
+        "UNIQUE(board_id, position)",
+        "UNIQUE(board_id, title)"
+      ]
+    },
+    "cards": {
+      "purpose": "Cards belonging to one board column.",
+      "columns": {
+        "id": {
+          "type": "INTEGER",
+          "primary_key": true,
+          "autoincrement": true
+        },
+        "column_id": {
+          "type": "INTEGER",
+          "required": true,
+          "references": "columns.id"
+        },
+        "title": {
+          "type": "TEXT",
+          "required": true
+        },
+        "details": {
+          "type": "TEXT",
+          "required": true
+        },
+        "position": {
+          "type": "INTEGER",
+          "required": true,
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "TEXT",
+          "required": true,
+          "format": "ISO-8601 UTC"
+        },
+        "updated_at": {
+          "type": "TEXT",
+          "required": true,
+          "format": "ISO-8601 UTC"
+        }
+      },
+      "constraints": [
+        "UNIQUE(column_id, position)"
+      ]
+    }
+  },
+  "indexes": [
+    "CREATE INDEX idx_boards_user_id ON boards(user_id)",
+    "CREATE INDEX idx_columns_board_position ON columns(board_id, position)",
+    "CREATE INDEX idx_cards_column_position ON cards(column_id, position)"
+  ],
+  "relationships": [
+    "users 1-to-1 boards",
+    "boards 1-to-many columns",
+    "columns 1-to-many cards"
+  ],
+  "initialization": {
+    "create_database_if_missing": true,
+    "create_tables_if_missing": true,
+    "seed_mvp_user": {
+      "username": "user",
+      "password_storage": "A server-side password hash; never store the plaintext password."
+    },
+    "seed_one_board_for_mvp_user": true,
+    "seed_fixed_columns": 5
+  },
+  "api_mapping": {
+    "board_response": {
+      "columns": [
+        {
+          "id": "string",
+          "title": "string",
+          "cardIds": [
+            "string"
+          ]
+        }
+      ],
+      "cards": {
+        "card-id": {
+          "id": "string",
+          "title": "string",
+          "details": "string"
+        }
+      }
+    },
+    "persistence_rules": [
+      "Database integer IDs are mapped to stable API string IDs.",
+      "Column position determines the order of columns in the response.",
+      "Card position determines the order of cardIds within a column.",
+      "A board update is applied in one transaction.",
+      "A board response never includes another user's records."
+    ]
+  }
+}
