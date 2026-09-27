@@ -35,8 +35,6 @@ class BoardService:
             column.id for column in board.columns
         }:
             raise BoardError("column IDs cannot be added or removed")
-        if set(existing.cards) != set(board.cards):
-            raise BoardError("card IDs cannot be added or removed")
         card_ids = [card_id for column in board.columns for card_id in column.cardIds]
         if len(card_ids) != len(set(card_ids)) or set(card_ids) != set(board.cards):
             raise BoardError("cards must be referenced exactly once")

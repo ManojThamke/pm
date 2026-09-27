@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -14,15 +14,47 @@ import {
 import { KanbanColumn } from "@/components/KanbanColumn";
 import { KanbanCardPreview } from "@/components/KanbanCardPreview";
 import { createId, initialData, moveCard, type BoardData } from "@/lib/kanban";
+import { boardFromDto, boardToDto, createBoardApi } from "@/lib/boardApi";
 
 type KanbanBoardProps = {
   username?: string;
+  authorization?: string;
   onLogout?: () => void;
 };
 
-export const KanbanBoard = ({ username, onLogout }: KanbanBoardProps = {}) => {
+export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardProps = {}) => {
   const [board, setBoard] = useState<BoardData>(() => initialData);
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(Boolean(authorization));
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const api = useMemo(
+    () => (authorization ? createBoardApi(authorization) : null),
+    [authorization]
+  );
+
+  useEffect(() => {
+    if (!api) return;
+    setIsLoading(true);
+    api.getBoard()
+      .then((dto) => setBoard(boardFromDto(dto)))
+      .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "Unable to load the board."))
+      .finally(() => setIsLoading(false));
+  }, [api]);
+
+  const persist = (nextBoard: BoardData) => {
+    setBoard(nextBoard);
+    if (!api) return;
+    setIsSaving(true);
+    setError(null);
+    api.updateBoard(boardToDto(nextBoard))
+      .then((dto) => setBoard(boardFromDto(dto)))
+      .catch((reason: unknown) => {
+        setError(reason instanceof Error ? reason.message : "Unable to save the board.");
+        api.getBoard().then((dto) => setBoard(boardFromDto(dto))).catch(() => undefined);
+      })
+      .finally(() => setIsSaving(false));
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -44,45 +76,45 @@ export const KanbanBoard = ({ username, onLogout }: KanbanBoardProps = {}) => {
       return;
     }
 
-    setBoard((prev) => ({
-      ...prev,
-      columns: moveCard(prev.columns, active.id as string, over.id as string),
-    }));
+    const next = {
+      ...board,
+      columns: moveCard(board.columns, active.id as string, over.id as string),
+    };
+    persist(next);
   };
 
   const handleRenameColumn = (columnId: string, title: string) => {
-    setBoard((prev) => ({
-      ...prev,
-      columns: prev.columns.map((column) =>
+    persist({
+      ...board,
+      columns: board.columns.map((column) =>
         column.id === columnId ? { ...column, title } : column
       ),
-    }));
+    });
   };
 
   const handleAddCard = (columnId: string, title: string, details: string) => {
     const id = createId("card");
-    setBoard((prev) => ({
-      ...prev,
+    persist({
+      ...board,
       cards: {
-        ...prev.cards,
+        ...board.cards,
         [id]: { id, title, details: details || "No details yet." },
       },
-      columns: prev.columns.map((column) =>
+      columns: board.columns.map((column) =>
         column.id === columnId
           ? { ...column, cardIds: [...column.cardIds, id] }
           : column
       ),
-    }));
+    });
   };
 
   const handleDeleteCard = (columnId: string, cardId: string) => {
-    setBoard((prev) => {
-      return {
-        ...prev,
+    persist({
+        ...board,
         cards: Object.fromEntries(
-          Object.entries(prev.cards).filter(([id]) => id !== cardId)
+          Object.entries(board.cards).filter(([id]) => id !== cardId)
         ),
-        columns: prev.columns.map((column) =>
+        columns: board.columns.map((column) =>
           column.id === columnId
             ? {
                 ...column,
@@ -90,7 +122,6 @@ export const KanbanBoard = ({ username, onLogout }: KanbanBoardProps = {}) => {
               }
             : column
         ),
-      };
     });
   };
 
@@ -145,6 +176,9 @@ export const KanbanBoard = ({ username, onLogout }: KanbanBoardProps = {}) => {
                 <span className="h-2 w-2 rounded-full bg-[var(--accent-yellow)]" />
                 {column.title}
               </div>
+              {isLoading ? <p role="status" className="text-sm text-[var(--gray-text)]">Loading board...</p> : null}
+              {isSaving ? <p role="status" className="text-sm text-[var(--gray-text)]">Saving changes...</p> : null}
+              {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
             ))}
           </div>
         </header>

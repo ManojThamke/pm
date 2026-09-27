@@ -5,6 +5,7 @@ export type AuthenticatedUser = {
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
 export const SESSION_STORAGE_KEY = "pm-mvp-session";
+export const AUTHORIZATION_SESSION_KEY = "pm-mvp-authorization";
 const MVP_USERNAME = "user";
 const MVP_PASSWORD = "password";
 
@@ -33,4 +34,14 @@ export const writeSession = (
 
 export const clearSession = (storage: StorageLike): void => {
   storage.removeItem(SESSION_STORAGE_KEY);
+};
+
+export const writeAuthorization = (storage: StorageLike, authorization: string) =>
+  storage.setItem(AUTHORIZATION_SESSION_KEY, authorization);
+
+export const readAuthorization = (storage: StorageLike | undefined): string | null =>
+  storage?.getItem(AUTHORIZATION_SESSION_KEY) ?? null;
+
+export const clearAuthorization = (storage: StorageLike): void => {
+  storage.removeItem(AUTHORIZATION_SESSION_KEY);
 };

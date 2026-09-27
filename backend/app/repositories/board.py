@@ -68,25 +68,46 @@ class BoardRepository:
             if set(column_ids) != {column.id for column in board.columns}:
                 raise ValueError("column IDs cannot be added or removed")
             now = utc_now()
-            db.execute("UPDATE cards SET position=position + 1000000")
+            existing_cards = db.execute(
+                """SELECT cards.id FROM cards JOIN columns ON columns.id=cards.column_id
+                   WHERE columns.board_id=?""",
+                (board_id,),
+            ).fetchall()
+            existing_card_ids = {f"card-{row['id']}" for row in existing_cards}
+            db.execute(
+                """UPDATE cards SET position=position + 1000000
+                   WHERE column_id IN (SELECT id FROM columns WHERE board_id=?)""",
+                (board_id,),
+            )
+            removed_ids = existing_card_ids - set(board.cards)
+            if removed_ids:
+                db.execute(
+                    "DELETE FROM cards WHERE id IN ({})".format(
+                        ",".join("?" for _ in removed_ids)
+                    ),
+                    tuple(int(card_id.removeprefix("card-")) for card_id in removed_ids),
+                )
             for position, column in enumerate(board.columns):
                 db.execute(
                     "UPDATE columns SET title=?,position=? WHERE id=?",
                     (column.title, position, column_ids[column.id]),
                 )
                 for card_position, card_id in enumerate(column.cardIds):
-                    numeric_id = int(card_id.removeprefix("card-"))
                     card = board.cards[card_id]
-                    db.execute(
-                        """UPDATE cards SET column_id=?,title=?,details=?,
-                        position=?,updated_at=? WHERE id=?""",
-                        (
-                            column_ids[column.id],
-                            card.title,
-                            card.details,
-                            card_position,
-                            now,
-                            numeric_id,
-                        ),
-                    )
+                    numeric_id = card_id.removeprefix("card-")
+                    if numeric_id.isdigit() and card_id in existing_card_ids:
+                        db.execute(
+                            """UPDATE cards SET column_id=?,title=?,details=?,
+                               position=?,updated_at=? WHERE id=?""",
+                            (column_ids[column.id], card.title, card.details,
+                             card_position, now, int(numeric_id)),
+                        )
+                    else:
+                        db.execute(
+                            """INSERT INTO cards(
+                               column_id,title,details,position,created_at,updated_at
+                               ) VALUES(?,?,?,?,?,?)""",
+                            (column_ids[column.id], card.title, card.details,
+                             card_position, now, now),
+                        )
             db.execute("UPDATE boards SET updated_at=? WHERE id=?", (now, board_id))

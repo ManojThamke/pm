@@ -1,14 +1,15 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { validateCredentials, writeSession, type StorageLike } from "@/lib/auth";
+import { validateCredentials, writeAuthorization, writeSession, type StorageLike } from "@/lib/auth";
 
 type SignInFormProps = {
   storage: StorageLike;
   onSignedIn: () => void;
+  authorizationStorage?: StorageLike;
 };
 
-export const SignInForm = ({ storage, onSignedIn }: SignInFormProps) => {
+export const SignInForm = ({ storage, onSignedIn, authorizationStorage }: SignInFormProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,6 +28,10 @@ export const SignInForm = ({ storage, onSignedIn }: SignInFormProps) => {
     }
 
     writeSession(storage, user);
+    writeAuthorization(
+      authorizationStorage ?? storage,
+      `Basic ${btoa(`${username}:${password}`)}`
+    );
     onSignedIn();
   };
 
