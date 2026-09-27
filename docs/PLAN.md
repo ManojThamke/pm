@@ -179,22 +179,22 @@
 
 ### Checklist
 
-- [ ] Add a server-only OpenRouter client configured from `OPENROUTER_API_KEY`.
-- [ ] Use the selected free OpenRouter model through configuration rather than hardcoding secrets.
-- [ ] Add a minimal backend AI service and a diagnostic route or test-only operation for `2+2`.
-- [ ] Add timeout, response validation, and explicit error reporting consistent with backend conventions.
-- [ ] Document local configuration and ensure keys are excluded from logs and client bundles.
+- [x] Add a server-only OpenRouter client configured from `OPENROUTER_API_KEY`.
+- [x] Use the selected free OpenRouter model through configuration rather than hardcoding secrets.
+- [x] Add a minimal backend AI service and an authenticated diagnostic route for `2+2`.
+- [x] Add timeout, response validation, and explicit error reporting consistent with backend conventions.
+- [x] Document local configuration and ensure keys are excluded from logs and client bundles.
 
 ### Tests and verification
 
-- [ ] Unit-test request construction, configuration validation, response parsing, timeout, and provider failures at 100% unit coverage for new code.
-- [ ] Mock provider calls in deterministic tests.
-- [ ] Run one opt-in connectivity test using a real key; do not make normal CI depend on network access.
-- [ ] Verify the diagnostic response contains the expected answer without exposing credentials.
+- [x] Unit-test request construction, configuration validation, response parsing, timeout, and provider failures at 100% unit coverage for new code.
+- [x] Mock provider calls in deterministic tests.
+- [x] Add one opt-in connectivity test using a real key; normal CI does not depend on network access.
+- [x] Verify the diagnostic response contains the expected answer without exposing credentials.
 
 ### Success criteria
 
-- A configured local environment can complete the `2+2` provider call.
+- A configured local environment can complete the `2+2` provider call (subject to provider model availability).
 - Missing keys and provider failures produce actionable server errors.
 - No secret appears in frontend assets, test output, or application logs.
 
