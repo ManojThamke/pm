@@ -32,3 +32,7 @@ uv run --project backend pytest backend/tests/test_openrouter_real.py -q
 
 The free-model catalog and availability are controlled by OpenRouter and can
 change independently of this application.
+
+Structured board operations are documented in
+[`AI-BOARD-OPERATIONS.md`](AI-BOARD-OPERATIONS.md). The frontend chat sidebar is
+intentionally deferred to Part 10.

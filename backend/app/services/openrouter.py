@@ -1,10 +1,13 @@
 """Small server-only client for the OpenRouter chat completions API."""
 
+import json
 import os
 from dataclasses import dataclass
 from typing import Any
 
 import httpx
+
+from app.models.domain import Board, BoardOperationResponse, ConversationMessage
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_MODEL = "qwen/qwen3.8-27b:free"
@@ -23,6 +26,47 @@ class OpenRouterProviderError(OpenRouterError):
     """The provider rejected the request or returned an invalid response."""
 
 
+MAX_PROMPT_LENGTH = 24000
+
+
+def serialize_history(history: list[ConversationMessage]) -> str:
+    return json.dumps(
+        [{"role": item.role, "content": item.content} for item in history],
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+
+
+def build_board_operation_prompt(
+    board: Board, question: str, history: list[ConversationMessage]
+) -> str:
+    prompt = (
+        "You operate a project board. Return ONLY a JSON object matching this schema: "
+        '{"assistant_response":"string","board_update":object|null}. '
+        "board_update must be a complete board and must preserve column IDs. "
+        "Do not include markdown or extra keys.\n"
+        f"CURRENT_BOARD_JSON:\n{board.model_dump_json()}\n"
+        f"QUESTION:\n{question}\n"
+        f"CONVERSATION_HISTORY_JSON:\n{serialize_history(history)}"
+    )
+    if len(prompt) > MAX_PROMPT_LENGTH:
+        raise OpenRouterProviderError("AI request is too large")
+    return prompt
+
+
+def parse_board_operation_response(content: str) -> BoardOperationResponse:
+    text = content.strip()
+    if text.startswith("```") and text.endswith("```"):
+        text = text.split("\n", 1)[1].rsplit("\n", 1)[0].strip()
+    try:
+        value = json.loads(text)
+        return BoardOperationResponse.model_validate(value)
+    except (json.JSONDecodeError, TypeError, ValueError) as exc:
+        raise OpenRouterProviderError(
+            "OpenRouter returned invalid board operation"
+        ) from exc
+
+
 @dataclass(frozen=True)
 class OpenRouterConfig:
     api_key: str
@@ -38,9 +82,7 @@ class OpenRouterConfig:
             )
         model = os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL).strip()
         if not model:
-            raise OpenRouterConfigurationError(
-                "OPENROUTER_MODEL must not be empty"
-            )
+            raise OpenRouterConfigurationError("OPENROUTER_MODEL must not be empty")
         timeout_value = os.getenv("OPENROUTER_TIMEOUT", str(DEFAULT_TIMEOUT)).strip()
         try:
             timeout = float(timeout_value)
@@ -92,9 +134,7 @@ class OpenRouterClient:
                 "OpenRouter returned an invalid response"
             ) from exc
         if not isinstance(answer, str) or not answer.strip():
-            raise OpenRouterProviderError(
-                "OpenRouter returned an invalid response"
-            )
+            raise OpenRouterProviderError("OpenRouter returned an invalid response")
         return answer.strip()
 
 

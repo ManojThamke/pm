@@ -14,7 +14,5 @@ from app.services.openrouter import (
     reason="opt-in real OpenRouter connectivity test",
 )
 def test_real_openrouter_diagnostic() -> None:
-    answer = diagnostic_answer(
-        OpenRouterClient(OpenRouterConfig.from_environment())
-    )
+    answer = diagnostic_answer(OpenRouterClient(OpenRouterConfig.from_environment()))
     assert "4" in answer

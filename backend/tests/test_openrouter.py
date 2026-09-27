@@ -22,9 +22,7 @@ def test_config_reads_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("OPENROUTER_API_KEY", " key ")
     monkeypatch.setenv("OPENROUTER_MODEL", " model ")
     monkeypatch.setenv("OPENROUTER_TIMEOUT", "2.5")
-    assert OpenRouterConfig.from_environment() == OpenRouterConfig(
-        "key", "model", 2.5
-    )
+    assert OpenRouterConfig.from_environment() == OpenRouterConfig("key", "model", 2.5)
 
 
 @pytest.mark.parametrize(

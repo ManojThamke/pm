@@ -202,19 +202,19 @@
 
 ### Checklist
 
-- [ ] Define and document the structured response schema for assistant text and optional board updates.
-- [ ] Send the current board JSON, user question, and conversation history on every AI request.
-- [ ] Validate structured output before applying any board update.
-- [ ] Apply updates through the same board service and invariants used by normal API mutations.
-- [ ] Reject malformed, unauthorized, or conflicting AI operations explicitly and preserve the prior board.
-- [ ] Add request limits and history handling appropriate for the local MVP.
+- [x] Define and document the structured response schema for assistant text and optional board updates.
+- [x] Send the current board JSON, user question, and conversation history on every AI request.
+- [x] Validate structured output before applying any board update.
+- [x] Apply updates through the same board service and invariants used by normal API mutations.
+- [x] Reject malformed, unauthorized, or conflicting AI operations explicitly and preserve the prior board.
+- [x] Add request limits and history handling appropriate for the local MVP.
 
 ### Tests and verification
 
-- [ ] Unit-test prompt construction, history serialization, structured parsing, validation, and update application at 100% coverage for new code.
-- [ ] Mock valid, empty, malformed, and malicious-looking provider outputs.
-- [ ] Add API integration tests proving board state is unchanged on invalid AI output and changed only on valid output.
-- [ ] Add regression tests for every supported card/column operation.
+- [x] Unit-test prompt construction, history serialization, structured parsing, validation, and update application at 100% coverage for new code.
+- [x] Mock valid, empty, malformed, and malicious-looking provider outputs.
+- [x] Add API integration tests proving board state is unchanged on invalid AI output and changed only on valid output.
+- [x] Add regression tests for every supported card/column operation.
 
 ### Success criteria
 
