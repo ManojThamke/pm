@@ -85,7 +85,9 @@ class BoardRepository:
                     "DELETE FROM cards WHERE id IN ({})".format(
                         ",".join("?" for _ in removed_ids)
                     ),
-                    tuple(int(card_id.removeprefix("card-")) for card_id in removed_ids),
+                    tuple(
+                        int(card_id.removeprefix("card-")) for card_id in removed_ids
+                    ),
                 )
             for position, column in enumerate(board.columns):
                 db.execute(
@@ -99,15 +101,27 @@ class BoardRepository:
                         db.execute(
                             """UPDATE cards SET column_id=?,title=?,details=?,
                                position=?,updated_at=? WHERE id=?""",
-                            (column_ids[column.id], card.title, card.details,
-                             card_position, now, int(numeric_id)),
+                            (
+                                column_ids[column.id],
+                                card.title,
+                                card.details,
+                                card_position,
+                                now,
+                                int(numeric_id),
+                            ),
                         )
                     else:
                         db.execute(
                             """INSERT INTO cards(
                                column_id,title,details,position,created_at,updated_at
                                ) VALUES(?,?,?,?,?,?)""",
-                            (column_ids[column.id], card.title, card.details,
-                             card_position, now, now),
+                            (
+                                column_ids[column.id],
+                                card.title,
+                                card.details,
+                                card_position,
+                                now,
+                                now,
+                            ),
                         )
             db.execute("UPDATE boards SET updated_at=? WHERE id=?", (now, board_id))

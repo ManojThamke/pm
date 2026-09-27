@@ -119,6 +119,29 @@ def test_repository_save_updates_order_and_rejects_missing_board(
         repository.save(user.id, board)
 
 
+def test_repository_save_removes_and_inserts_cards(database: Path) -> None:
+    repository = BoardRepository(database)
+    user = repository.user("user")
+    assert user is not None
+    board = repository.load(user.id)
+    assert board is not None
+
+    removed_id = board.columns[0].cardIds.pop()
+    board.cards.pop(removed_id)
+    repository.save(user.id, board)
+    saved = repository.load(user.id)
+    assert saved is not None
+    assert removed_id not in saved.cards
+
+    new_id = "card-new"
+    board.cards[new_id] = Card(id=new_id, title="New", details="Created")
+    board.columns[0].cardIds.append(new_id)
+    repository.save(user.id, board)
+    saved = repository.load(user.id)
+    assert saved is not None
+    assert any(card.title == "New" for card in saved.cards.values())
+
+
 def test_service_auth_read_and_update_invariants(database: Path) -> None:
     service = BoardService(BoardRepository(database))
     user_id = service.authenticate("user", "password")

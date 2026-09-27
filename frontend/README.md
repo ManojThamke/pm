@@ -29,8 +29,8 @@ same static app used by the container.
 ## MVP sign-in
 
 The board is protected by a client-side fake sign-in using username `user` and
-password `password`. A successful sign-in stores only the username in browser
-`localStorage`, so it survives refresh; logging out removes it. This is not
-secure authentication: credentials and session state are readable by the
-browser, there is no server-side authorization, and it must not be used for
-production or sensitive data.
+password `password`. The username is stored in `localStorage`; the Basic
+authorization header is stored only in `sessionStorage` for the current tab.
+The backend validates every board request and persists it in SQLite. This is
+not production authentication: encoded credentials remain browser-readable for
+the tab and the password is never sent beyond the API request.

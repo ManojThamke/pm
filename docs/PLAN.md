@@ -155,25 +155,25 @@
 
 ### Checklist
 
-- [ ] Replace frontend-only board state with a typed API client and controller-facing hooks/actions.
-- [ ] Add loading, empty, optimistic or pending, success, and error states without hiding failures.
-- [ ] Persist rename, add, delete, and drag-and-drop operations through the backend.
-- [ ] Refresh or reconcile board state after every successful mutation.
-- [ ] Keep API DTOs separate from UI component props where their responsibilities differ.
-- [ ] Update the container routing so frontend asset requests and API requests coexist.
+- [x] Replace frontend-only board state with a typed API client and controller-facing hooks/actions.
+- [x] Add loading, empty, optimistic or pending, success, and error states without hiding failures.
+- [x] Persist rename, add, delete, and drag-and-drop operations through the backend.
+- [x] Refresh or reconcile board state after every successful mutation.
+- [x] Keep API DTOs separate from UI component props where their responsibilities differ.
+- [x] Update the container routing so frontend asset requests and API requests coexist.
 
 ### Tests and verification
 
-- [ ] Unit-test API client, mapping, state transitions, and failure states at 100% unit coverage for changed frontend scope.
-- [ ] Run backend API integration tests and browser integration tests against the complete container.
-- [ ] Cover reload persistence, concurrent-looking sequential edits, network errors, and unauthorized responses.
-- [ ] Run lint, type-check, production build, and all unit/e2e suites.
+- [x] Unit-test API client, mapping, state transitions, and failure states at 100% unit coverage for changed frontend scope.
+- [x] Run backend API integration tests and browser integration tests against the complete container.
+- [x] Cover reload persistence, concurrent-looking sequential edits, network errors, and unauthorized responses.
+- [x] Run lint, type-check, production build, and all unit/e2e suites.
 
 ### Success criteria
 
-- Board changes survive a page reload and a backend restart.
-- The UI never silently reports a successful mutation when the API fails.
-- Browser tests prove the complete user flow from login through persisted board edits.
+- [x] Board changes survive a page reload and a backend restart.
+- [x] The UI never silently reports a successful mutation when the API fails.
+- [x] Browser tests prove the complete user flow from login through persisted board edits.
 
 ## Part 8: OpenRouter connectivity
 

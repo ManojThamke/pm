@@ -35,7 +35,6 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
 
   useEffect(() => {
     if (!api) return;
-    setIsLoading(true);
     api.getBoard()
       .then((dto) => setBoard(boardFromDto(dto)))
       .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "Unable to load the board."))
@@ -176,11 +175,11 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
                 <span className="h-2 w-2 rounded-full bg-[var(--accent-yellow)]" />
                 {column.title}
               </div>
-              {isLoading ? <p role="status" className="text-sm text-[var(--gray-text)]">Loading board...</p> : null}
-              {isSaving ? <p role="status" className="text-sm text-[var(--gray-text)]">Saving changes...</p> : null}
-              {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
             ))}
           </div>
+          {isLoading ? <p role="status" className="text-sm text-[var(--gray-text)]">Loading board...</p> : null}
+          {isSaving ? <p role="status" className="text-sm text-[var(--gray-text)]">Saving changes...</p> : null}
+          {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
         </header>
 
         <DndContext
