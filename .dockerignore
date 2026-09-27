@@ -1,0 +1,9 @@
+.env
+.git
+.gitignore
+backend/.venv
+backend/__pycache__
+backend/.pytest_cache
+backend/.ruff_cache
+backend/htmlcov
+backend/.coverage
