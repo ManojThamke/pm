@@ -131,3 +131,53 @@ test("logs out and protects the board again", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Sign in to Kanban Studio" })).toBeVisible();
   await expect(page.getByTestId("column-col-backlog")).not.toBeVisible();
 });
+
+test("uses the AI chat and refreshes an AI board update", async ({ page }) => {
+  let updatedBoard: unknown = null;
+  await page.route("**/api/ai/board-operation", async (route) => {
+    const request = route.request().postDataJSON();
+    updatedBoard = {
+      ...request.board,
+      cards: {
+        ...request.board.cards,
+        "card-ai": { id: "card-ai", title: "AI card", details: "Created by the copilot." },
+      },
+      columns: request.board.columns.map((column: { id: string; cardIds: string[] }) =>
+        column.id === "col-backlog"
+          ? { ...column, cardIds: [...column.cardIds, "card-ai"] }
+          : column
+      ),
+    };
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        assistant_response: "I created the card.",
+        board_update: updatedBoard,
+      }),
+    });
+  });
+  await page.route("**/api/board", async (route) => {
+    if (route.request().method() === "GET" && updatedBoard) {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(updatedBoard),
+      });
+      return;
+    }
+    await route.continue();
+  });
+
+  await page.goto("/");
+  await signIn(page);
+  await page.getByRole("button", { name: /open ai chat/i }).click();
+  await page.getByPlaceholder("What should change?").fill("Create an AI card");
+  const operation = page.waitForResponse((response) =>
+    response.url().endsWith("/api/ai/board-operation")
+  );
+  await page.getByRole("button", { name: "Send" }).click();
+  await operation;
+  await expect(page.getByText("I created the card.")).toBeVisible();
+  await expect(page.getByText("AI card")).toBeVisible();
+});

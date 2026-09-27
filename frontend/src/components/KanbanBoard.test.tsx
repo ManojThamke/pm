@@ -43,4 +43,11 @@ describe("KanbanBoard", () => {
 
     expect(within(column).queryByText("New card")).not.toBeInTheDocument();
   });
+
+  it("opens the AI chat when authenticated", async () => {
+    render(<KanbanBoard authorization="Basic token" />);
+    await userEvent.click(screen.getByRole("button", { name: /open ai chat/i }));
+    expect(screen.getByRole("complementary", { name: /ai chat/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/what should change/i)).toBeInTheDocument();
+  });
 });

@@ -34,3 +34,11 @@ authorization header is stored only in `sessionStorage` for the current tab.
 The backend validates every board request and persists it in SQLite. This is
 not production authentication: encoded credentials remain browser-readable for
 the tab and the password is never sent beyond the API request.
+
+## AI board copilot
+
+After signing in, open **Open AI chat** to ask the copilot to create, edit, or
+move cards. Each request includes the current board and the conversation
+history. Validated changes are saved by the backend and the sidebar refreshes
+the board automatically. Failed requests remain visible with a **Retry**
+action; the OpenRouter key stays server-side in `.env`.

@@ -15,6 +15,7 @@ import { KanbanColumn } from "@/components/KanbanColumn";
 import { KanbanCardPreview } from "@/components/KanbanCardPreview";
 import { createId, initialData, moveCard, type BoardData } from "@/lib/kanban";
 import { boardFromDto, boardToDto, createBoardApi } from "@/lib/boardApi";
+import { AiChatSidebar } from "@/components/AiChatSidebar";
 
 type KanbanBoardProps = {
   username?: string;
@@ -53,6 +54,12 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
         api.getBoard().then((dto) => setBoard(boardFromDto(dto))).catch(() => undefined);
       })
       .finally(() => setIsSaving(false));
+  };
+
+  const refreshBoard = async () => {
+    if (!api) return;
+    const dto = await api.getBoard();
+    setBoard(boardFromDto(dto));
   };
 
   const sensors = useSensors(
@@ -209,6 +216,13 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
           </DragOverlay>
         </DndContext>
       </main>
+      {authorization ? (
+        <AiChatSidebar
+          authorization={authorization}
+          board={board}
+          onBoardUpdated={refreshBoard}
+        />
+      ) : null}
     </div>
   );
 };

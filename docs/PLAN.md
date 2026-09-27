@@ -226,12 +226,12 @@
 
 ### Checklist
 
-- [ ] Add a responsive sidebar view for conversation history, input, loading, errors, and assistant responses.
-- [ ] Add a typed frontend controller/API client for AI chat.
-- [ ] Render board updates from validated responses and refresh the board from the backend after an update.
-- [ ] Preserve normal Kanban interactions while chat is open, including keyboard and focus accessibility.
-- [ ] Add empty, slow, failed, and retry states without silent fallbacks.
-- [ ] Update user-facing documentation with the completed local workflow.
+- [x] Add a responsive sidebar view for conversation history, input, loading, errors, and assistant responses.
+- [x] Add a typed frontend controller/API client for AI chat.
+- [x] Render board updates from validated responses and refresh the board from the backend after an update.
+- [x] Preserve normal Kanban interactions while chat is open, including keyboard and focus accessibility.
+- [x] Add empty, slow, failed, and retry states without silent fallbacks.
+- [x] Update user-facing documentation with the completed local workflow.
 
 ### Tests and verification
 
