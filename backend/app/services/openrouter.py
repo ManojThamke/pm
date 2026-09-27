@@ -10,7 +10,7 @@ import httpx
 from app.models.domain import Board, BoardOperationResponse, ConversationMessage
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEFAULT_MODEL = "qwen/qwen3.8-27b:free"
+DEFAULT_MODEL = "openrouter/free"
 DEFAULT_TIMEOUT = 15.0
 
 

@@ -56,15 +56,17 @@ export const AiChatSidebar = ({
 
   return (
     <>
-      <button
-        type="button"
-        className="fixed bottom-5 right-5 z-30 rounded-full bg-[var(--secondary-purple)] px-5 py-3 text-sm font-semibold text-white shadow-lg lg:bottom-8 lg:right-8"
-        aria-expanded={isOpen}
-        aria-controls="ai-chat-sidebar"
-        onClick={() => setIsOpen((open) => !open)}
-      >
-        {isOpen ? "Close AI chat" : "Open AI chat"}
-      </button>
+      {!isOpen ? (
+        <button
+          type="button"
+          className="fixed bottom-5 right-5 z-30 rounded-full bg-[var(--secondary-purple)] px-5 py-3 text-sm font-semibold text-white shadow-lg lg:bottom-8 lg:right-8"
+          aria-expanded={isOpen}
+          aria-controls="ai-chat-sidebar"
+          onClick={() => setIsOpen(true)}
+        >
+          Open AI chat
+        </button>
+      ) : null}
       {isOpen ? (
         <aside
           id="ai-chat-sidebar"

@@ -49,5 +49,9 @@ describe("KanbanBoard", () => {
     await userEvent.click(screen.getByRole("button", { name: /open ai chat/i }));
     expect(screen.getByRole("complementary", { name: /ai chat/i })).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/what should change/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Close AI chat" }));
+    expect(screen.queryByRole("complementary", { name: /ai chat/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /open ai chat/i })).toBeInTheDocument();
   });
 });

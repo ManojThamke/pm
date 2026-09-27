@@ -51,6 +51,7 @@ def test_config_uses_default_model_and_timeout(monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.delenv("OPENROUTER_MODEL", raising=False)
     monkeypatch.delenv("OPENROUTER_TIMEOUT", raising=False)
     result = OpenRouterConfig.from_environment()
+    assert result.model == "openrouter/free"
     assert result.model == openrouter.DEFAULT_MODEL
     assert result.timeout == openrouter.DEFAULT_TIMEOUT
 

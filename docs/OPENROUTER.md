@@ -13,11 +13,12 @@ environment, never the frontend, with:
 
 ```text
 OPENROUTER_API_KEY=...
-OPENROUTER_MODEL=qwen/qwen3.8-27b:free
+OPENROUTER_MODEL=openrouter/free
 OPENROUTER_TIMEOUT=15
 ```
 
-`OPENROUTER_MODEL` and `OPENROUTER_TIMEOUT` are optional. The key is only read
+`OPENROUTER_MODEL` and `OPENROUTER_TIMEOUT` are optional. When the model is
+omitted, `openrouter/free` selects an available free model. The key is only read
 by the backend, is not included in responses or logs, and is not copied into
 the Docker image. Missing configuration returns HTTP 503; provider, timeout,
 HTTP, and malformed-response failures return HTTP 502.
@@ -35,4 +36,4 @@ change independently of this application.
 
 Structured board operations are documented in
 [`AI-BOARD-OPERATIONS.md`](AI-BOARD-OPERATIONS.md). The frontend chat sidebar is
-intentionally deferred to Part 10.
+available after signing in.
