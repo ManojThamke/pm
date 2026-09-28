@@ -26,34 +26,32 @@ export const KanbanColumn = ({
     <section
       ref={setNodeRef}
       className={clsx(
-        "flex min-h-[520px] flex-col rounded-3xl border border-[var(--stroke)] bg-[var(--surface-strong)] p-4 shadow-[var(--shadow)] transition",
+        "flex min-h-0 min-w-[272px] flex-1 basis-0 snap-start flex-col rounded-2xl border border-[var(--stroke)] bg-[var(--column)] transition",
         isOver && "ring-2 ring-[var(--accent-yellow)]"
       )}
       data-testid={`column-${column.id}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="w-full">
-          <div className="flex items-center gap-3">
-            <div className="h-2 w-10 rounded-full bg-[var(--accent-yellow)]" />
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gray-text)]">
-              {cards.length} cards
-            </span>
-          </div>
-          <input
-            key={`${column.id}-${column.title}`}
-            defaultValue={column.title}
-            onBlur={(event) => {
-              const title = event.currentTarget.value;
-              if (title !== column.title) {
-                onRename(column.id, title);
-              }
-            }}
-            className="mt-3 w-full bg-transparent font-display text-lg font-semibold text-[var(--navy-dark)] outline-none"
-            aria-label="Column title"
-          />
-        </div>
-      </div>
-      <div className="mt-4 flex flex-1 flex-col gap-3">
+      <header className="flex items-center gap-2 border-t-[3px] border-[var(--accent-yellow)] rounded-t-2xl px-3 pb-2 pt-3">
+        <input
+          key={`${column.id}-${column.title}`}
+          defaultValue={column.title}
+          onBlur={(event) => {
+            const title = event.currentTarget.value;
+            if (title !== column.title) {
+              onRename(column.id, title);
+            }
+          }}
+          className="min-w-0 flex-1 rounded-md bg-transparent px-1 py-0.5 font-display text-[15px] font-semibold text-[var(--navy-dark)] outline-none transition hover:bg-white/70 focus:bg-white focus:ring-2 focus:ring-[var(--primary-blue)]/40"
+          aria-label="Column title"
+        />
+        <span
+          className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-[var(--gray-text)]"
+          aria-label={`${cards.length} cards`}
+        >
+          {cards.length}
+        </span>
+      </header>
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-3 pb-1 pt-1">
         <SortableContext items={column.cardIds} strategy={verticalListSortingStrategy}>
           {cards.map((card) => (
             <KanbanCard
@@ -64,7 +62,7 @@ export const KanbanColumn = ({
           ))}
         </SortableContext>
         {cards.length === 0 && (
-          <div className="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-[var(--stroke)] px-3 py-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gray-text)]">
+          <div className="flex min-h-24 flex-1 items-center justify-center rounded-xl border border-dashed border-[var(--navy-dark)]/15 px-3 py-6 text-center text-xs font-medium text-[var(--gray-text)]">
             Drop a card here
           </div>
         )}

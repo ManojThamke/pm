@@ -16,6 +16,7 @@ import { KanbanCardPreview } from "@/components/KanbanCardPreview";
 import { createId, initialData, moveCard, type BoardData } from "@/lib/kanban";
 import { boardFromDto, boardToDto, createBoardApi } from "@/lib/boardApi";
 import { AiChatSidebar } from "@/components/AiChatSidebar";
+import { LogOutIcon, SparkIcon } from "@/components/Icons";
 
 type KanbanBoardProps = {
   username?: string;
@@ -28,6 +29,7 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(Boolean(authorization));
   const [isSaving, setIsSaving] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const api = useMemo(
     () => (authorization ? createBoardApi(authorization) : null),
@@ -134,60 +136,60 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
   const activeCard = activeCardId ? cardsById[activeCardId] : null;
 
   return (
-    <div className="relative overflow-hidden">
-      <div className="pointer-events-none absolute left-0 top-0 h-[420px] w-[420px] -translate-x-1/3 -translate-y-1/3 rounded-full bg-[radial-gradient(circle,_rgba(32,157,215,0.25)_0%,_rgba(32,157,215,0.05)_55%,_transparent_70%)]" />
-      <div className="pointer-events-none absolute bottom-0 right-0 h-[520px] w-[520px] translate-x-1/4 translate-y-1/4 rounded-full bg-[radial-gradient(circle,_rgba(117,57,145,0.18)_0%,_rgba(117,57,145,0.05)_55%,_transparent_75%)]" />
-
-      <main className="relative mx-auto flex min-h-screen max-w-[1500px] flex-col gap-10 px-6 pb-16 pt-12">
-        <header className="flex flex-col gap-6 rounded-[32px] border border-[var(--stroke)] bg-white/80 p-8 shadow-[var(--shadow)] backdrop-blur">
-          <div className="flex flex-wrap items-start justify-between gap-6">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--gray-text)]">
-                Single Board Kanban
+    <div className="flex h-dvh overflow-hidden bg-[var(--surface)]">
+      <main className="flex min-w-0 flex-1 flex-col">
+        <header className="flex items-center justify-between gap-4 border-b border-[var(--stroke)] bg-white px-4 py-3 lg:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="h-7 w-1.5 shrink-0 rounded-full bg-[var(--accent-yellow)]" />
+            <h1 className="font-display text-xl font-semibold text-[var(--navy-dark)]">
+              Kanban Studio
+            </h1>
+            {isLoading ? (
+              <p role="status" className="text-xs font-medium text-[var(--gray-text)]">
+                Loading board...
               </p>
-              <h1 className="mt-3 font-display text-4xl font-semibold text-[var(--navy-dark)]">
-                Kanban Studio
-              </h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--gray-text)]">
-                Keep momentum visible. Rename columns, drag cards between stages,
-                and capture quick notes without getting buried in settings.
+            ) : null}
+            {isSaving ? (
+              <p role="status" className="text-xs font-medium text-[var(--gray-text)]">
+                Saving changes...
               </p>
-            </div>
-            <div className="rounded-2xl border border-[var(--stroke)] bg-[var(--surface)] px-5 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--gray-text)]">
-                Focus
-              </p>
-              <p className="mt-2 text-lg font-semibold text-[var(--primary-blue)]">
-                One board. Five columns. Zero clutter.
-              </p>
-            </div>
-            {onLogout ? (
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-[var(--gray-text)]">Signed in as {username}</span>
-                <button
-                  className="rounded-xl border border-[var(--stroke)] px-4 py-2 text-sm font-semibold text-[var(--navy-dark)]"
-                  onClick={onLogout}
-                >
-                  Log out
-                </button>
-              </div>
             ) : null}
           </div>
-          <div className="flex flex-wrap items-center gap-4">
-            {board.columns.map((column) => (
-              <div
-                key={column.id}
-                className="flex items-center gap-2 rounded-full border border-[var(--stroke)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--navy-dark)]"
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {authorization && !isChatOpen ? (
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-lg bg-[var(--secondary-purple)] p-2 sm:px-3 sm:py-1.5 text-sm font-semibold text-white transition hover:brightness-110"
+                aria-expanded={isChatOpen}
+                aria-controls="ai-chat-sidebar"
+                onClick={() => setIsChatOpen(true)}
               >
-                <span className="h-2 w-2 rounded-full bg-[var(--accent-yellow)]" />
-                {column.title}
-              </div>
-            ))}
+                <SparkIcon />
+                <span className="sr-only sm:not-sr-only">Open AI chat</span>
+              </button>
+            ) : null}
+            {onLogout ? (
+              <>
+                <span className="hidden text-sm text-[var(--gray-text)] sm:inline">
+                  Signed in as <span className="font-semibold text-[var(--navy-dark)]">{username}</span>
+                </span>
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-lg border border-[var(--stroke)] p-2 sm:px-3 sm:py-1.5 text-sm font-semibold text-[var(--navy-dark)] transition hover:bg-[var(--surface)]"
+                  onClick={onLogout}
+                >
+                  <LogOutIcon />
+                  <span className="sr-only sm:not-sr-only">Log out</span>
+                </button>
+              </>
+            ) : null}
           </div>
-          {isLoading ? <p role="status" className="text-sm text-[var(--gray-text)]">Loading board...</p> : null}
-          {isSaving ? <p role="status" className="text-sm text-[var(--gray-text)]">Saving changes...</p> : null}
-          {error ? <p role="alert" className="text-sm text-red-700">{error}</p> : null}
         </header>
+        {error ? (
+          <p role="alert" className="border-b border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700 lg:px-6">
+            {error}
+          </p>
+        ) : null}
 
         <DndContext
           sensors={sensors}
@@ -195,7 +197,10 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <section className="grid gap-6 lg:grid-cols-5">
+          <section
+            aria-label="Board columns"
+            className="flex min-h-0 flex-1 snap-x scroll-px-4 gap-4 overflow-x-auto p-4 lg:scroll-px-6 lg:p-6"
+          >
             {board.columns.map((column) => (
               <KanbanColumn
                 key={column.id}
@@ -209,7 +214,7 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
           </section>
           <DragOverlay>
             {activeCard ? (
-              <div className="w-[260px]">
+              <div className="w-[272px] rotate-2">
                 <KanbanCardPreview card={activeCard} />
               </div>
             ) : null}
@@ -221,6 +226,8 @@ export const KanbanBoard = ({ username, authorization, onLogout }: KanbanBoardPr
           authorization={authorization}
           board={board}
           onBoardUpdated={refreshBoard}
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
         />
       ) : null}
     </div>

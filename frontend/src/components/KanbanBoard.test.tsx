@@ -44,6 +44,14 @@ describe("KanbanBoard", () => {
     expect(within(column).queryByText("New card")).not.toBeInTheDocument();
   });
 
+  it("shows the signed-in user and logs out", async () => {
+    const onLogout = vi.fn();
+    render(<KanbanBoard username="user" onLogout={onLogout} />);
+    expect(screen.getByText("user")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Log out" }));
+    expect(onLogout).toHaveBeenCalledOnce();
+  });
+
   it("opens the AI chat when authenticated", async () => {
     render(<KanbanBoard authorization="Basic token" />);
     await userEvent.click(screen.getByRole("button", { name: /open ai chat/i }));
